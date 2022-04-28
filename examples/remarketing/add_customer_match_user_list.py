@@ -20,17 +20,98 @@ For privacy purposes, the user list size will show as zero until the list has
 at least 1,000 users. After that, the size will be rounded to the two most
 significant digits.
 """
-
+import pymysql
 import argparse
 import hashlib
 import sys
 import uuid
-
+import os
+import logging
+import json
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
 
 def main(client, customer_id, skip_polling):
+    rds_host  = os.environ['DB_HOST']
+    name = os.environ['DB_USERNAME']
+    password = os.environ['DB_PASSWORD']
+    db_name = os.environ['DB_DATABASE']
+    developer_token = os.environ['TOKEN_DEV']
+    client_id = os.environ['CLIENT_ID']
+    client_secret = os.environ['CLIENT_SECRET']
+    db_nameAudience = os.environ['DB_AUDIENCE']
+    audienceId=470
+
+    port = 3306
+
+    try:
+        conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
+        connAudience = pymysql.connect(rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
+        print("connection",conn)
+    except:
+        logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+        sys.exit()
+    
+    try:
+        clientId = client_id
+        audienceId = audienceId
+
+        mycursorAudience = connAudience.cursor()
+        mycursor = conn.cursor()
+        mycursor.execute("SELECT name, description, targetId FROM audiences where audienceId={}".format(audienceId))
+        result = mycursor.fetchone()
+        print("result-->",result)
+        segmentName = str(audienceId) + ' - ' + str(result[0])
+        description = result[1]
+        targetsIds = result[2]
+
+        mycursor.execute("SELECT keyType, isHash, query, appIdGAds,attributes FROM segmentConfiguration where audienceId={}".format(audienceId))
+        result = mycursor.fetchone()
+        print("result2",result)
+        keyType = result[0] or 0
+        isHash = result[1]
+        keysArrayHeader = result[2].split(',')
+        print('keysArrayHeader',keysArrayHeader)
+        attributes = result[4]
+        switcher={
+                    1:'mobile',
+                    2:'email',
+                    3:'customer',
+                    4:'mobileAdId'
+                 }
+
+        type = switcher.get(int(keyType), 'email')
+        print('type', type)
+        if type == 'mobileAdId':
+            appId = result[3]
+            print('appId', appId)
+
+        mycursor.execute("SELECT data FROM targets where targetId in ({})".format(targetsIds))
+        targetsList = mycursor.fetchone()
+        jsonTarget = json.loads(targetsList[0])
+        access_token = jsonTarget['token_gads']
+        accountId = jsonTarget['client_customer_id']
+
+
+        mycursorAudience.execute("SELECT {} FROM audience_{} where status=0 group by {}".format(attributes,audienceId,attributes))
+
+        rows = mycursorAudience.fetchall()
+        totalRows = len(rows)
+    
+    except GoogleAdsException as ex:
+        print(
+            f"Request with ID '{ex.request_id}' failed with status "
+            f"'{ex.error.code().name}' and includes the following errors:"
+        )
+        for error in ex.failure.errors:
+            print(f"\tError with message '{error.message}'.")
+            if error.location:
+                for field_path_element in error.location.field_path_elements:
+                    print(f"\t\tOn field: {field_path_element.field_name}")
+        sys.exit(1)
     """Uses Customer Match to create and add users to a new user list.
 
     Args:

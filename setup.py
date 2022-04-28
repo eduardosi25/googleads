@@ -26,6 +26,7 @@ install_requires = [
     "setuptools >= 40.3.0",
     "nox >= 2020.12.31, < 2022.6",
     "protobuf >= 3.12.0, < 3.18.0",
+    "pymsql"
 ]
 
 with io.open("README.rst", "r", encoding="utf-8") as readme_file:
