@@ -51,6 +51,6 @@ try:
     print("connection",conn)
 
 except Exception as e: 
-    print(e)
+    print("error conexion-->",e)
     # logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
     # sys.exit()
