@@ -46,8 +46,8 @@ audienceId=470
 port = 3306
 
 try:
-    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
-    connAudience = pymysql.connect(rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
+    conn = pymysql.connect(host=rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
+    connAudience = pymysql.connect(host=rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
     print("connection",conn)
 
 except Exception as e: 
