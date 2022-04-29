@@ -33,26 +33,24 @@ logger.setLevel(logging.INFO)
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
+rds_host  = os.environ['DB_HOST']
+name = os.environ['DB_USERNAME']
+password = os.environ['DB_PASSWORD']
+db_name = os.environ['DB_DATABASE']
+developer_token = os.environ['TOKEN_DEV']
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
+db_nameAudience = os.environ['DB_AUDIENCE']
+audienceId=470
 
-def main(client, customer_id, skip_polling):
-    rds_host  = os.environ['DB_HOST']
-    name = os.environ['DB_USERNAME']
-    password = os.environ['DB_PASSWORD']
-    db_name = os.environ['DB_DATABASE']
-    developer_token = os.environ['TOKEN_DEV']
-    client_id = os.environ['CLIENT_ID']
-    client_secret = os.environ['CLIENT_SECRET']
-    db_nameAudience = os.environ['DB_AUDIENCE']
-    audienceId=470
+port = 3306
 
-    port = 3306
+try:
+    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
+    connAudience = pymysql.connect(rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
+    print("connection",conn)
 
-    try:
-        conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
-        connAudience = pymysql.connect(rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
-        print("connection",conn)
-    
-    except Exception as e: 
-        print(e)
-        # logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-        # sys.exit()
+except Exception as e: 
+    print(e)
+    # logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+    # sys.exit()
