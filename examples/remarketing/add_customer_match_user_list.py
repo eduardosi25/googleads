@@ -51,11 +51,9 @@ def main(client, customer_id, skip_polling):
         conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
         connAudience = pymysql.connect(rds_host, user=name, passwd=password, db=db_nameAudience, connect_timeout=5)
         print("connection",conn)
-    
-    except Exception as e: 
-        print(e)
-        # logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
-        # sys.exit()
+    except:
+        logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
+        sys.exit()
     
     try:
         clientId = client_id
