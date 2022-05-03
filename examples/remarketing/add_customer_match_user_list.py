@@ -232,11 +232,9 @@ def _build_offline_user_data_job_operations(client, df):
 
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # print("emails---->",(arrayEmails))
-    for i in range(0, size-1, 50000):
+    for i in df:
         operations = []
-        df_copy = df.iloc[i:min(size, i+50000)]
-        for row in df_copy.itertuples():
-            operations.append(_build_single_offline_user_data_job_operation(row[1], row[2], row[3], row[4], row[5], row[6], client))
+        operations.append(_build_single_offline_user_data_job_operation(i,client))
         operations_list.append(operations)
     
     print("identifier", operations_list)
