@@ -579,7 +579,7 @@ if __name__ == "__main__":
             )
             # The following argument(s) should be provided to run the example.
             parser.add_argument(
-                "-c",
+                "-a",
                 "--account_id",
                 type=str,
                 required=True,
