@@ -576,7 +576,7 @@ def main(client, customer_id, skip_polling):
         client, customer_id
     )
     _add_users_to_customer_match_user_list(
-        client, customer_id, user_list_resource_name, skip_polling
+        client, customer_id, user_list_resource_name, skip_polling, arrayEmails
     )
 
 
