@@ -509,7 +509,19 @@ def main(client, customer_id, skip_polling):
         
 
         try:
-            main(googleads_client, event['accountId'], 1, arrayEmails)
+            parser = argparse.ArgumentParser(
+                description="Adds a custom audience for a specified customer."
+            )
+            # The following argument(s) should be provided to run the example.
+            parser.add_argument(
+                "-a",
+                "--account_id",
+                type=str,
+                required=True,
+                help="The Google Ads account ID.",
+            )
+            args = parser.parse_args()
+            main(googleads_client, args.account_id, 1, arrayEmails)
         except GoogleAdsException as ex:
             print(
                 f"Request with ID '{ex.request_id}' failed with status "
