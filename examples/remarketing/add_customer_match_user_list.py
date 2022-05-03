@@ -235,13 +235,13 @@ def _build_offline_user_data_job_operations(client, df):
         operations = []
         df_copy = df.iloc[i:min(size, i+50000)]
         for row in df_copy.itertuples():
-            operations.append(_build_single_offline_user_data_job_operation(row[1], row[2], row[3], row[4], row[5], row[6]))
+            operations.append(_build_single_offline_user_data_job_operation(row[1], row[2], row[3], row[4], row[5], row[6], client))
         operations_list.append(operations)
     
     print("identifier", operations_list)
     return operations_list
 
-def _build_single_offline_user_data_job_operation( email, first_name, last_name, postal_code, country_code,  phone_number):
+def _build_single_offline_user_data_job_operation( email, first_name, last_name, postal_code, country_code,  phone_number, client):
     
     user_data_operation = client.get_type("OfflineUserDataJobOperation")
     user_data = user_data_operation.create
