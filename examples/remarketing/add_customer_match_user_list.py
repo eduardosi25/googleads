@@ -211,7 +211,9 @@ def _add_users_to_customer_match_user_list(
         )
 
 
-def _build_offline_user_data_job_operations(client, arrayEmails):
+def _build_offline_user_data_job_operations(client, df):
+    size = df.shape[0]
+    operations_list = []
     """Builds and returns two sample offline user data job operations.
 
     Args:
@@ -228,20 +230,35 @@ def _build_offline_user_data_job_operations(client, arrayEmails):
     user_identifier_with_hashed_email = client.get_type("UserIdentifier")
 
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
-    # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # print("emails---->",(arrayEmails))
-    if (len(arrayEmails) > 0):
-        for value in arrayEmails:
-            # print("value--->", value)
-            user_identifier_with_hashed_email.hashed_email = _normalize_and_hash(
-                value
-            )
-            user_data_with_email_address.user_identifiers.append(
-                user_identifier_with_hashed_email
-            )
-            print("identifier", user_identifier_with_hashed_email.hashed_email)
-    else:
-        print("esta vacio")
+    for i in range(0, size-1, 50000):
+        operations = []
+        df_copy = df.iloc[i:min(size, i+50000)]
+        for row in df_copy.itertuples():
+            operations.append(_build_single_offline_user_data_job_operation(row[1], row[2], row[3], row[4], row[5], row[6]))
+        operations_list.append(operations)
+    
+    print("identifier", operations_list)
+    return operations_list
+
+def _build_single_offline_user_data_job_operation( email, first_name, last_name, postal_code, country_code,  phone_number):
+    
+    user_data_operation = client.get_type("OfflineUserDataJobOperation")
+    user_data = user_data_operation.create
+    user_identifier = client.get_type('UserIdentifier')
+    user_identifier.hashed_email = _normalize_and_hash(email)
+    user_identifier.hashed_phone_number = _normalize_and_hash(phone_number)
+    address_info = client.get_type('OfflineUserAddressInfo')
+    address_info.hashed_first_name = _normalize_and_hash(first_name)
+    address_info.hashed_last_name = _normalize_and_hash(last_name)
+    address_info.country_code = country_code 
+    address_info.postal_code = postal_code 
+
+    user_identifier.address_info = address_info 
+    user_data.user_identifiers.append(user_identifier)
+    return user_data
+    # else:
+    #     print("esta vacio")
 
     # Creates a second user data based on a physical address.
     user_data_with_physical_address_operation = client.get_type(
