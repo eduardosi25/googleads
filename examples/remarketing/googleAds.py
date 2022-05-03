@@ -33,7 +33,6 @@ that, the size will be rounded to the two most significant digits.
 import hashlib
 import json
 import csv
-import boto3
 import os
 import sys
 import pymysql
@@ -76,7 +75,7 @@ def python_cc(cc):
         cc = 'PE'
     return cc
 
-def main(client, customer_id, skip_polling, arrayEmails):
+def main2(client, customer_id, skip_polling, arrayEmails):
         """Uses Customer Match to create and add users to a new user list.
 
     Args:
@@ -393,7 +392,7 @@ def _normalize_and_hash(s):
     """
     return hashlib.sha256(s.strip().lower().encode()).hexdigest()
     # [END add_customer_match_user_list]
-def main(client, customer_id, skip_polling):
+def main(event, context):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -540,7 +539,6 @@ def main(client, customer_id, skip_polling):
         #print("CREANDO Y ACTUALIZANDO ADUIENCIA LISTA")
 
         # GoogleAdsClient will read the google-ads.yaml configuration file in the
-if __name__ == "__main__":
         credentials = {
             "developer_token": "vsu25qAMsiR-BrUZXOJofg",
             "refresh_token": "1//0f2Rt2drGWikiCgYIARAAGA8SNwF-L9IrMIdInGeAPTCOJ01WlApqmfxEaEsJbhLIMTsQAa9Iiuw0TyWNXWjoKB6zsIXahHCv1R8",
@@ -552,7 +550,7 @@ if __name__ == "__main__":
         
 
         try:
-            main(googleads_client, event['accountId'], 1, arrayEmails)
+            main2(googleads_client, event['accountId'], 1, arrayEmails)
         except GoogleAdsException as ex:
             print(
                 f"Request with ID '{ex.request_id}' failed with status "
