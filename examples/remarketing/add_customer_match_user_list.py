@@ -228,10 +228,11 @@ def _build_offline_user_data_job_operations(client, arrayEmails):
     user_identifier_with_hashed_email = client.get_type("UserIdentifier")
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
-    print("emails---->",arrayEmails)
+    print("emails---->",(arrayEmails))
     if (len(arrayEmails) > 0):
+        for value in arrayEmails:
             user_identifier_with_hashed_email.hashed_email = _normalize_and_hash(
-                arrayEmails
+                value
             )
             user_data_with_email_address.user_identifiers.append(
                 user_identifier_with_hashed_email
@@ -445,7 +446,7 @@ def main(client, customer_id, skip_polling):
         rows = mycursorAudience.fetchall()
         totalRows = len(rows)
         print("totalRows", totalRows)
-        # print("rows", rows)
+        print("rows", rows)
         print("PREPARANDO API")
 
         x = 0
