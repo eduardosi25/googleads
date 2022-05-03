@@ -212,7 +212,7 @@ def _add_users_to_customer_match_user_list(
 
 
 def _build_offline_user_data_job_operations(client, df):
-    size = df.shape[0]
+    print("df--->",df)
     operations_list = []
     """Builds and returns two sample offline user data job operations.
 
@@ -466,7 +466,7 @@ def main(client, customer_id, skip_polling):
         rows = mycursorAudience.fetchall()
         totalRows = len(rows)
         print("totalRows", totalRows)
-        print("rows", rows)
+        # print("rows", rows)
         print("PREPARANDO API")
 
         x = 0
