@@ -228,7 +228,7 @@ def _build_offline_user_data_job_operations(client, arrayEmails):
     user_identifier_with_hashed_email = client.get_type("UserIdentifier")
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
-    print("emails---->",len(arrayEmails))
+    print("emails---->",arrayEmails)
     if (len(arrayEmails) > 0):
             user_identifier_with_hashed_email.hashed_email = _normalize_and_hash(
                 arrayEmails
