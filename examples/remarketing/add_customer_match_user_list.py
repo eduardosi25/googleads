@@ -107,7 +107,7 @@ def _create_customer_match_user_list(client, customer_id):
 
 # [START add_customer_match_user_list]
 def _add_users_to_customer_match_user_list(
-    client, customer_id, user_list_resource_name, skip_polling
+    client, customer_id, user_list_resource_name, skip_polling, arrayEmails
 ):
     """Uses Customer Match to create and add users to a new user list.
 
@@ -146,7 +146,7 @@ def _add_users_to_customer_match_user_list(
 
     request = client.get_type("AddOfflineUserDataJobOperationsRequest")
     request.resource_name = offline_user_data_job_resource_name
-    request.operations = _build_offline_user_data_job_operations(client)
+    request.operations = _build_offline_user_data_job_operations(client, arrayEmails)
     request.enable_partial_failure = True
 
     # Issues a request to add the operations to the offline user data job.
@@ -204,7 +204,7 @@ def _add_users_to_customer_match_user_list(
         )
 
 
-def _build_offline_user_data_job_operations(client):
+def _build_offline_user_data_job_operations(client, arrayEmails):
     """Builds and returns two sample offline user data job operations.
 
     Args:
@@ -359,7 +359,7 @@ def _normalize_and_hash(s):
     return hashlib.sha256(s.strip().lower().encode()).hexdigest()
     # [END add_customer_match_user_list]
 
-def main(client, customer_id, skip_polling):
+def main(client, customer_id, skip_polling, arrayEmails):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -561,7 +561,7 @@ def main(client, customer_id, skip_polling):
 
 
 
-if __name__ == "__main__":
+
     # GoogleAdsClient will read the google-ads.yaml configuration file in the
     # home directory if none is specified.
     googleads_client = GoogleAdsClient.load_from_storage(path="../../google-ads.yaml",version="v9")
@@ -587,7 +587,7 @@ if __name__ == "__main__":
                 help="The Google Ads customer ID.",
             )
             args = parser.parse_args()
-            main(googleads_client, args.account_id, 1)
+            main(googleads_client, args.account_id, 1, arrayEmails)
             print("accountId",args.account_id)
     except GoogleAdsException as ex:
         print(
