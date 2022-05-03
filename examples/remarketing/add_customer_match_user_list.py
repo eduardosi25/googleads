@@ -359,7 +359,7 @@ def _normalize_and_hash(s):
     return hashlib.sha256(s.strip().lower().encode()).hexdigest()
     # [END add_customer_match_user_list]
 
-def main(client, customer_id, skip_polling):
+def main(client, customer_id, skip_polling, arrayEmails):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -379,7 +379,7 @@ def main(client, customer_id, skip_polling):
     except:
         logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
         sys.exit()
-    
+ 
     try:
         clientId = client_id
         audienceId = audienceId
@@ -588,7 +588,7 @@ def main(client, customer_id, skip_polling):
 
 
 
-if __name__ == "__main__":
+
     # GoogleAdsClient will read the google-ads.yaml configuration file in the
     # home directory if none is specified.
     googleads_client = GoogleAdsClient.load_from_storage(path="../../google-ads.yaml",version="v9")
@@ -602,7 +602,7 @@ if __name__ == "__main__":
      
 
     try:
-        main(googleads_client, "4385469092", 0)
+        main(googleads_client, args.account_id, 0)
     except GoogleAdsException as ex:
         print(
             f"Request with ID '{ex.request_id}' failed with status "
