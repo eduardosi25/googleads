@@ -372,7 +372,7 @@ def _normalize_and_hash(s):
     # [END add_customer_match_user_list]
 
 
-def main(client, customer_id, skip_polling, arrayEmails):
+def main(client, customer_id, skip_polling):
     rds_host = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -580,7 +580,7 @@ def main(client, customer_id, skip_polling, arrayEmails):
     )
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # GoogleAdsClient will read the google-ads.yaml configuration file in the
     # home directory if none is specified.
     googleads_client = GoogleAdsClient.load_from_storage(
@@ -593,29 +593,29 @@ def main(client, customer_id, skip_polling, arrayEmails):
 
     #googleads_client = GoogleAdsClient.load_from_dict(credentials)
 
-    # try:
-    parser = argparse.ArgumentParser(
-        description="Adds a custom audience for a specified customer."
-    )
-    # The following argument(s) should be provided to run the example.
-    parser.add_argument(
-        "-a",
-        "--account_id",
-        type=str,
-        required=True,
-        help="The Google Ads customer ID.",
-    )
-    args = parser.parse_args()
-    main(googleads_client, args.account_id, 1, arrayEmails)
-    print("accountId", args.account_id)
-    # except GoogleAdsException as ex:
-    #     print(
-    #         f"Request with ID '{ex.request_id}' failed with status "
-    #         f"'{ex.error.code().name}' and includes the following errors:"
-    #     )
-    #     for error in ex.failure.errors:
-    #         print(f"\tError with message '{error.message}'.")
-    #         if error.location:
-    #             for field_path_element in error.location.field_path_elements:
-    #                 print(f"\t\tOn field: {field_path_element.field_name}")
-    #     sys.exit(1)
+    try:
+        parser = argparse.ArgumentParser(
+            description="Adds a custom audience for a specified customer."
+        )
+        # The following argument(s) should be provided to run the example.
+        parser.add_argument(
+            "-a",
+            "--account_id",
+            type=str,
+            required=True,
+            help="The Google Ads customer ID.",
+        )
+        args = parser.parse_args()
+        main(googleads_client, args.account_id, 1)
+        print("accountId", args.account_id)
+    except GoogleAdsException as ex:
+        print(
+            f"Request with ID '{ex.request_id}' failed with status "
+            f"'{ex.error.code().name}' and includes the following errors:"
+        )
+        for error in ex.failure.errors:
+            print(f"\tError with message '{error.message}'.")
+            if error.location:
+                for field_path_element in error.location.field_path_elements:
+                    print(f"\t\tOn field: {field_path_element.field_name}")
+        sys.exit(1)
