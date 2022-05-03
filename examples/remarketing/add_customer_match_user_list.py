@@ -34,6 +34,35 @@ from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
 
+def NormalizeAndSHA256(s):
+  """Normalizes (lowercase, remove whitespace) and hashes a string with SHA-256.
+
+  Args:
+    s: The string to perform this operation on.
+
+  Returns:
+    A normalized and SHA-256 hashed string.
+  """
+  return hashlib.sha256(s.strip().lower().encode('utf-8')).hexdigest()
+
+def remove_spaces(string):
+    return ''.join(string.split())
+
+def remove_dots_before_at(string):
+    parts = string.split('@')
+    if len(parts) > 1:
+        parts[0] = ''.join(parts[0].split('.'))
+    print('@'.join(parts))
+    return '@'.join(parts)
+
+def python_none():
+    pass
+
+def python_cc(cc):
+    if cc.lower() == 'peruana':
+        cc = 'PE'
+    return cc
+
 def main(client, customer_id, skip_polling):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
@@ -100,6 +129,76 @@ def main(client, customer_id, skip_polling):
 
         rows = mycursorAudience.fetchall()
         totalRows = len(rows)
+        print("totalRows", totalRows)
+        print("PREPARANDO API")
+
+        x = 0
+        keyArray = []
+        arrayMobileAdId = []
+        arrayEmails = []
+        arrayPhones = []
+        arrayAddress = []
+        totalContacs = 0
+        for row in rows:
+            totalContacs = totalContacs + 1
+            values = row
+            cont = 0
+            for header in keysArrayHeader:
+                if (header == 'email'):
+                    arrayEmails.append(values[cont])
+                    #print("arrayEmails",arrayEmails)
+                if (header == 'mobile advertising id'):
+                    arrayMobileAdId.append(values[cont])
+                    #print("arraymobileaid",arrayMobileAdId)
+                if (header == 'phone'):
+                    arrayPhones.append(values[cont])
+                    #print("arrayphones",arrayPhones)
+                if (header == 'firstname'):
+                    firstName = values[cont]
+                    lastName = values[cont+1]
+                    #print("firstname",firstName)
+                    #print("lastname",lastName)
+
+                    if len(firstName) == 0:
+                        firstName = python_none()
+
+                    if len(lastName) == 0:
+                        lastName = python_none()
+
+                    if(int(isHash) == 0):
+                        hashedFirstName =  NormalizeAndSHA256(remove_spaces(firstName))
+                        hashedLastName =   NormalizeAndSHA256(remove_spaces(lastName))
+                    else:
+                        hashedFirstName =  firstName
+                        hashedLastName =   lastName
+
+                    countryCode = values[cont+2]
+                    #print("countryCode",countryCode)
+
+                    zipCode = values[cont+3]
+                    #print("zipcode",zipCode)
+
+                    if len(countryCode)!=2:
+                        countryCode = python_cc(countryCode)
+
+
+                    validName = str(hashedFirstName)
+                    validlastName = str(hashedLastName)
+                    if len(zipCode) > 0 and len(countryCode) == 2 and len(validName.encode('utf-8')) == 64 and len(validlastName.encode('utf-8')) == 64:
+                        arrayAddress.append({
+                            'addressInfo': {
+                              # First and last name must be normalized and hashed.
+                              'hashedFirstName':hashedFirstName,
+                              'hashedLastName': hashedLastName,
+                              # Country code and zip code are sent in plaintext.
+                              'countryCode': countryCode,
+                              'zipCode': zipCode
+                            }
+                            })
+                cont = cont + 1
+                #print("arrayAddress",arrayAddress)
+        #print("arrayEmails-->",arrayEmails)
+        print("CREANDO LISTA")
     
     except GoogleAdsException as ex:
         print(
