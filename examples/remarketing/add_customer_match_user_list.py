@@ -359,7 +359,7 @@ def _normalize_and_hash(s):
     return hashlib.sha256(s.strip().lower().encode()).hexdigest()
     # [END add_customer_match_user_list]
 
-def main(client, customer_id, skip_polling, arrayEmails):
+def main(client, customer_id, skip_polling):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -379,7 +379,7 @@ def main(client, customer_id, skip_polling, arrayEmails):
     except:
         logger.error("ERROR: Unexpected error: Could not connect to MySql instance.")
         sys.exit()
- 
+    
     try:
         clientId = client_id
         audienceId = audienceId
@@ -507,34 +507,6 @@ def main(client, customer_id, skip_polling, arrayEmails):
 
         googleads_client = GoogleAdsClient.load_from_dict(credentials)
         
-
-        try:
-            parser = argparse.ArgumentParser(
-                description="Adds a custom audience for a specified customer."
-            )
-            # The following argument(s) should be provided to run the example.
-            parser.add_argument(
-                "-a",
-                "--account_id",
-                type=str,
-                required=True,
-                help="The Google Ads account ID.",
-            )
-            args = parser.parse_args()
-            main(googleads_client, args.account_id, 1, arrayEmails)
-        except GoogleAdsException as ex:
-            print(
-                f"Request with ID '{ex.request_id}' failed with status "
-                f"'{ex.error.code().name}' and includes the following errors:"
-            )
-            for error in ex.failure.errors:
-                print(f"\tError with message '{error.message}'.")
-                if error.location:
-                    for field_path_element in error.location.field_path_elements:
-                        print(f"\t\tOn field: {field_path_element.field_name}")
-            sys.exit(1)
-
-        
         totalContacs = totalRows
        # queryUpdate = "UPDATE `hexagonmatch`.`audiences` SET `status` = 2,reach={} WHERE (`audienceId` = {});".format(totalContacs,audienceId)
        # mycursor.execute(queryUpdate)
@@ -588,7 +560,7 @@ def main(client, customer_id, skip_polling, arrayEmails):
 
 
 
-
+if __name__ == "__main__":
     # GoogleAdsClient will read the google-ads.yaml configuration file in the
     # home directory if none is specified.
     googleads_client = GoogleAdsClient.load_from_storage(path="../../google-ads.yaml",version="v9")
@@ -602,7 +574,19 @@ def main(client, customer_id, skip_polling, arrayEmails):
      
 
     try:
-        main(googleads_client, args.account_id, 0)
+            parser = argparse.ArgumentParser(
+                description="Adds a custom audience for a specified customer."
+            )
+            # The following argument(s) should be provided to run the example.
+            parser.add_argument(
+                "-c",
+                "--account_id",
+                type=str,
+                required=True,
+                help="The Google Ads customer ID.",
+            )
+            args = parser.parse_args()
+            main(googleads_client, args.account_id, 1)
     except GoogleAdsException as ex:
         print(
             f"Request with ID '{ex.request_id}' failed with status "
