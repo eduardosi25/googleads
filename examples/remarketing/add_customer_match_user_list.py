@@ -91,6 +91,7 @@ def main(client, customer_id, skip_polling):
 
         mycursor.execute("SELECT data FROM targets where targetId in ({})".format(targetsIds))
         targetsList = mycursor.fetchone()
+        print("targetlist", targetsList)
         jsonTarget = json.loads(targetsList[0])
         access_token = jsonTarget['token_gads']
         accountId = jsonTarget['client_customer_id']
@@ -100,7 +101,7 @@ def main(client, customer_id, skip_polling):
 
         rows = mycursorAudience.fetchall()
         totalRows = len(rows)
-    
+        print("total", totalRows)
     except GoogleAdsException as ex:
         print(
             f"Request with ID '{ex.request_id}' failed with status "
