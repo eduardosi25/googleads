@@ -525,8 +525,8 @@ def main(client, customer_id, skip_polling):
         connAudience.close()
         conn.close()
     except Exception as e:
-        querySegment = "UPDATE `hexagonmatch`.`audiences` SET `status` = 3 WHERE (`audienceId` = '{}');".format(audienceId)
-        mycursor.execute(querySegment)
+        # querySegment = "UPDATE `hexagonmatch`.`audiences` SET `status` = 3 WHERE (`audienceId` = '{}');".format(audienceId)
+        # mycursor.execute(querySegment)
         conn.commit()
         conn.close()
         connAudience.close()
@@ -588,6 +588,7 @@ if __name__ == "__main__":
             )
             args = parser.parse_args()
             main(googleads_client, args.account_id, 1)
+            print("accountId",args.account_id)
     except GoogleAdsException as ex:
         print(
             f"Request with ID '{ex.request_id}' failed with status "
