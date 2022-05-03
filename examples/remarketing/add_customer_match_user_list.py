@@ -212,7 +212,8 @@ def _add_users_to_customer_match_user_list(
 
 
 def _build_offline_user_data_job_operations(client, df):
-    print("df--->",df)
+    size = len(df)
+    print("df--->",len(df))
     operations_list = []
     """Builds and returns two sample offline user data job operations.
 
