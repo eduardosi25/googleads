@@ -446,7 +446,7 @@ def main(client, customer_id, skip_polling):
         rows = mycursorAudience.fetchall()
         totalRows = len(rows)
         print("totalRows", totalRows)
-        print("rows", rows)
+        # print("rows", rows)
         print("PREPARANDO API")
 
         x = 0
