@@ -32,8 +32,6 @@ that, the size will be rounded to the two most significant digits.
 
 import hashlib
 import json
-import csv
-import boto3
 import os
 import sys
 import pymysql
