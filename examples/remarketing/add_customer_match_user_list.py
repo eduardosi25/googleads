@@ -391,7 +391,7 @@ def _normalize_and_hash(s):
     """
     return hashlib.sha256(s.strip().lower().encode()).hexdigest()
     # [END add_customer_match_user_list]
-def lambda_handler(event, context):
+def main(event, context):
     rds_host  = os.environ['DB_HOST']
     name = os.environ['DB_USERNAME']
     password = os.environ['DB_PASSWORD']
@@ -549,6 +549,7 @@ def lambda_handler(event, context):
         
 
         try:
+
             main(googleads_client, event['accountId'], 1, arrayEmails)
         except GoogleAdsException as ex:
             print(
