@@ -226,7 +226,7 @@ def _build_offline_user_data_job_operations(client, arrayEmails):
     )
     user_data_with_email_address = user_data_with_email_address_operation.create
     user_identifier_with_hashed_email = client.get_type("UserIdentifier")
-    print("identifier", user_identifier_with_hashed_email)
+
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # Hash normalized email addresses based on SHA-256 hashing algorithm.
     # print("emails---->",(arrayEmails))
@@ -239,6 +239,7 @@ def _build_offline_user_data_job_operations(client, arrayEmails):
             user_data_with_email_address.user_identifiers.append(
                 user_identifier_with_hashed_email
             )
+            print("identifier", user_identifier_with_hashed_email.hashed_email)
     else:
         print("esta vacio")
 
@@ -517,7 +518,7 @@ def main(client, customer_id, skip_polling):
                         })
                 cont = cont + 1
                 # print("arrayAddress",arrayAddress)
-        print("arrayEmails-->",arrayEmails)
+        # print("arrayEmails-->",arrayEmails)
         print("CREANDO LISTA")
         #print("CREANDO Y ACTUALIZANDO ADUIENCIA LISTA")
 
