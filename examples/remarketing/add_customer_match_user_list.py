@@ -223,49 +223,53 @@ def _build_offline_user_data_job_operations(client, df):
     Returns:
         A list containing the operations.
     """
-    # Creates a first user data based on an email address.
-    user_data_with_email_address_operation = client.get_type(
-        "OfflineUserDataJobOperation"
-    )
-    user_data_with_email_address = user_data_with_email_address_operation.create
-    user_identifier_with_hashed_email = client.get_type("UserIdentifier")
 
-    # Hash normalized email addresses based on SHA-256 hashing algorithm.
+
     # print("emails---->",(arrayEmails))
     for i in df:
         operations = []
         operations.append(_build_single_offline_user_data_job_operation(i,client))
         operations_list.append(operations)
-    
-    print("identifier", operations_list)
-    return operations_list
+        # Creates a first user data based on an email address.
+        user_data_with_email_address_operation = client.get_type(
+        "OfflineUserDataJobOperation"
+        )
+        user_data_with_email_address = user_data_with_email_address_operation.create
+        user_identifier_with_hashed_email = client.get_type("UserIdentifier")
+        # Hash normalized email addresses based on SHA-256 hashing algorithm.
+        user_identifier_with_hashed_email.hashed_email = _normalize_and_hash(i)
+        user_data_with_email_address.user_identifiers.append(user_identifier_with_hashed_email)
+    print("identifier", user_data_with_email_address_operation)
+    return [
+        user_data_with_email_address_operation
+    ]
 
-def _build_single_offline_user_data_job_operation( email, first_name, last_name, postal_code, country_code,  phone_number, client):
+def _build_single_offline_user_data_job_operation(email,client):
     
     user_data_operation = client.get_type("OfflineUserDataJobOperation")
     user_data = user_data_operation.create
     user_identifier = client.get_type('UserIdentifier')
     user_identifier.hashed_email = _normalize_and_hash(email)
-    user_identifier.hashed_phone_number = _normalize_and_hash(phone_number)
-    address_info = client.get_type('OfflineUserAddressInfo')
-    address_info.hashed_first_name = _normalize_and_hash(first_name)
-    address_info.hashed_last_name = _normalize_and_hash(last_name)
-    address_info.country_code = country_code 
-    address_info.postal_code = postal_code 
+    # user_identifier.hashed_phone_number = _normalize_and_hash(phone_number)
+    # address_info = client.get_type('OfflineUserAddressInfo')
+    # address_info.hashed_first_name = _normalize_and_hash(first_name)
+    # address_info.hashed_last_name = _normalize_and_hash(last_name)
+    # address_info.country_code = country_code 
+    # address_info.postal_code = postal_code 
 
-    user_identifier.address_info = address_info 
+    # user_identifier.address_info = address_info 
     user_data.user_identifiers.append(user_identifier)
     return user_data
     # else:
     #     print("esta vacio")
 
     # Creates a second user data based on a physical address.
-    user_data_with_physical_address_operation = client.get_type(
-        "OfflineUserDataJobOperation"
-    )
-    user_data_with_physical_address = (
-        user_data_with_physical_address_operation.create
-    )
+    # user_data_with_physical_address_operation = client.get_type(
+    #     "OfflineUserDataJobOperation"
+    # )
+    # user_data_with_physical_address = (
+    #     user_data_with_physical_address_operation.create
+    # )
     # user_identifier_with_address = client.get_type("UserIdentifier")
     # # First and last name must be normalized and hashed.
     # user_identifier_with_address.address_info.hashed_first_name = _normalize_and_hash(
@@ -281,10 +285,10 @@ def _build_single_offline_user_data_job_operation( email, first_name, last_name,
     #     user_identifier_with_address
     # )
 
-    return [
-        user_data_with_email_address_operation,
-        user_data_with_physical_address_operation,
-    ]
+    # return [
+    #     user_data_with_email_address_operation,
+    #     user_data_with_physical_address_operation
+    # ]
 
 
 def _check_job_status(
